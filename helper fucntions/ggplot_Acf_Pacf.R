@@ -14,13 +14,13 @@ ggplot_Acf_Pacf <- function(x, lag.max = NULL){
   
   p1 <- ggplot(data=acf_1_df, mapping=aes(x=lag, y=ACF)) +
     geom_bar(stat = "identity", position = "identity", fill="lightsteelblue") + 
-    geom_hline(yintercept = ciline, colour="red", size = 0.8, linetype="dashed") + 
-    geom_hline(yintercept = -ciline, colour="red", size = 0.8, linetype="dashed") 
+    geom_hline(yintercept = ciline, colour="red", size = 0.5, linetype="dashed") + 
+    geom_hline(yintercept = -ciline, colour="red", size = 0.5, linetype="dashed") 
   
   p2 <- ggplot(data=pacf_1_df, mapping=aes(x=lag, y=PACF)) +
     geom_bar(stat = "identity", position = "identity", fill="lightsteelblue") + 
-    geom_hline(yintercept = ciline, colour="red", size = 0.8, linetype="dashed") + 
-    geom_hline(yintercept = -ciline, colour="red", size = 0.8, linetype="dashed")
+    geom_hline(yintercept = ciline, colour="red", size = 0.5, linetype="dashed") + 
+    geom_hline(yintercept = -ciline, colour="red", size = 0.5, linetype="dashed")
   
   ret = list(ACF = p1, PACF = p2)
   
