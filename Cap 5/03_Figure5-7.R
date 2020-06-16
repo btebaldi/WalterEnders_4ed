@@ -17,6 +17,8 @@ library(dplyr)
 library(ggplot2)
 library(latex2exp)
 
+# set seed for reproductability
+set.seed(127)
 
 # --- Definiton of matrix coeficients ----
 
@@ -32,8 +34,6 @@ S =  matrix(c(1,0,0.8,1), nrow = 2, ncol = 2)
 nsim <- 200
 sim <- matrix(0, ncol = 2, nrow = nsim)
 colnames(sim) <- c("yt", "zt")
-
-set.seed(12345)
 
 # Simulation of the VAR
 for (i in 2:nsim) {
@@ -164,5 +164,48 @@ ggplot(shock2) +
 rm(list = c("i", "effect"))
 
 
+# --- Estimation of VAR and IRF using package vars ----
 
+# Estimate the var model (uses OLS)
+var.mdl <- vars::VAR(sim, p = 1, type = "none")
+
+# summary of the model
+summary(var.mdl)
+
+# Estimate the IRF, of the estimated model
+data <- vars::irf(var.mdl, n.ahead=20)
+
+# Organize response in a table
+data.table <- as_tibble(cbind(data$irf$yt, data$Lower$yt, data$Upper$yt, data$irf$zt, data$Lower$zt, data$Upper$zt))
+
+# normalize colunm names
+colnames(data.table) <- c("yt.y", "zt.y", "l_yt.y", "l_zt.y", "u_yt.y", "u_zt.y", 
+                 "yt.z", "zt.z", "l_yt.z", "l_zt.z", "u_yt.z", "u_zt.z")
+
+# add a colunm of time id
+data.table$Id = 1:nrow(data.table)
+
+# plot the IRFs (shock to y)
+ggplot(data.table) +
+  geom_line(aes(x=Id, y=yt.y), color="blue") +
+  geom_line(aes(x=Id, y=zt.y), color="red") +
+  geom_ribbon(aes(x=Id, ymax=u_yt.y, ymin=l_yt.y), alpha=0.15, fill="#045a8d") +
+  geom_ribbon(aes(x=Id, ymax=u_zt.y, ymin=l_zt.y), alpha=0.15, fill="#045a8d") +
+  labs(title = latex2exp::TeX("Response to $\\epsilon_{yt}$ shock1"),
+       y=NULL,
+       x=NULL,
+       caption = "Legend: Blue line = {yt} sequence Red Line = {zt} sequence"
+  )
+
+# plot the IRFs (shock to z)
+ggplot(data.table) +
+  geom_line(aes(x=Id, y=yt.z), color="blue") +
+  geom_line(aes(x=Id, y=zt.z), color="red") +
+  geom_ribbon(aes(x=Id, ymax=u_yt.z, ymin=l_yt.z), alpha=0.15, fill="#045a8d") +
+  geom_ribbon(aes(x=Id, ymax=u_zt.z, ymin=l_zt.z), alpha=0.15, fill="#045a8d") +
+  labs(title = latex2exp::TeX("Response to $\\epsilon_{zt}$ shock1"),
+       y=NULL,
+       x=NULL,
+       caption = "Legend: Blue line = {yt} sequence Red Line = {zt} sequence"
+  )
 
