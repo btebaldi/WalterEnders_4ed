@@ -4,7 +4,7 @@ rm(list = ls())
 # Author: Bruno Tebaldi
 # 2020-06-11
 #
-# Cross Correlation Function CCF¶
+# Cross Correlation Function CCF
 # The plots are of the Cross Covariance Function CCVF (Enders page 271)
 
 # load libraries
@@ -90,7 +90,7 @@ g4$plot <- g4$plot +
     y = NULL
   )
 
-cowplot::plot_grid(g1$plot, g2$plot, g3$plot, g4$plot)
 
-  
- 
+c1 <- cowplot::plot_grid(g1$plot, g2$plot, g3$plot, g4$plot)
+
+cowplot::save_plot("./Cap 5/Figs/Figure_5-4.png", c1, scale =2)
